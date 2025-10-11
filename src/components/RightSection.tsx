@@ -7,8 +7,6 @@ import ReactFlow, {
   useNodesState,
   useEdgesState,
   Background,
-  Controls,
-  MiniMap,
   ConnectionLineType,
   BackgroundVariant,
 } from 'reactflow';
@@ -325,13 +323,13 @@ const RightSection: React.FC<RightSectionProps> = ({
     }
 
     return nodes;
-  }, [selectedSection, portfolioData, onInfoClick, expandedNodes]);
+  }, [selectedSection, portfolioData, onInfoClick, expandedNodes, onSectionChange]);
 
   const generateEdges = useCallback(() => {
     const edges: Edge[] = [];
     // Add connections between related nodes if needed
     return edges;
-  }, [selectedSection]);
+  }, []);
 
   const initialNodes = useMemo(() => generateNodes(), [generateNodes]);
   const initialEdges = useMemo(() => generateEdges(), [generateEdges]);

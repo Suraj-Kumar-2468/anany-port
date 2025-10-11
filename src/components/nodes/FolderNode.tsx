@@ -1,7 +1,7 @@
 import React from 'react';
 import { Handle, Position } from 'reactflow';
-import { Box, Typography, IconButton } from '@mui/material';
-import { Folder as FolderIcon, Info as InfoIcon } from '@mui/icons-material';
+import { Box, Typography } from '@mui/material';
+import { Folder as FolderIcon } from '@mui/icons-material';
 
 interface FolderNodeProps {
   data: {

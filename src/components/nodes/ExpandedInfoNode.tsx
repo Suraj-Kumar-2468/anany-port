@@ -4,10 +4,7 @@ import {
   Box, 
   Typography, 
   IconButton,
-  Chip,
-  List,
-  ListItem,
-  ListItemText
+  Chip
 } from '@mui/material';
 import { 
   Close as CloseIcon,

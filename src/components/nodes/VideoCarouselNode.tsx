@@ -3,9 +3,7 @@ import { Handle, Position } from 'reactflow';
 import { 
   Box, 
   Typography, 
-  IconButton, 
-  Card,
-  CardContent
+  IconButton
 } from '@mui/material';
 import { 
   ArrowBackIos as ArrowBackIcon,

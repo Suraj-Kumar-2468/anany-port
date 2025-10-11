@@ -4,7 +4,6 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { Box } from '@mui/material';
 import LeftSidebar from './components/LeftSidebar';
 import RightSection from './components/RightSection';
-import DetailPanel from './components/DetailPanel';
 import portfolioData from './data/portfolioData.json';
 import './App.css';
 
@@ -41,10 +40,6 @@ function App() {
 
   const handleInfoClick = (data: DetailData) => {
     setDetailData(data);
-  };
-
-  const handleCloseDetail = () => {
-    setDetailData(null);
   };
 
   return (

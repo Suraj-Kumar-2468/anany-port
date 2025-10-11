@@ -11,11 +11,10 @@ import {
   Divider,
   Paper
 } from '@mui/material';
-import {
-  Work as WorkIcon,
+import { 
+  Work as WorkIcon, 
   Info as InfoIcon,
-  Description as ResumeIcon,
-  StickyNote2 as TodoIcon
+  Description as ResumeIcon
 } from '@mui/icons-material';
 import { DetailData } from '../App';
 
