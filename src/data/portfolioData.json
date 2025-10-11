@@ -1,0 +1,195 @@
+{
+  "profile": {
+    "name": "Alex Thompson",
+    "title": "Video Editor & Creative Storyteller",
+    "avatar": "https://via.placeholder.com/150x150/3b82f6/ffffff?text=AT",
+    "bio": "Hi! I'm Alex, a video editor with a sharp eye for detail and a soft spot for bold, human-centered ideas. I craft intuitive products and interfaces that simplify complexity—whether it's streamlining workflows, visualizing data, or making technology feel less... techy.",
+    "experience": "5+ years",
+    "location": "Los Angeles, CA",
+    "email": "alex@techvloggerpro.com",
+    "website": "https://alexthompson.dev"
+  },
+  "sections": {
+    "about": {
+      "id": "about",
+      "title": "About Me",
+      "icon": "info",
+      "content": {
+        "description": "Currently pursuing my master's in Video Production at UCLA, I thrive at the intersection of strategy, aesthetics, and usability. Whether I'm building seamless experiences or breaking the grid with experimental visuals, my goal is always the same: 'make it work beautifully'",
+        "skills": [
+          "Adobe Premiere Pro",
+          "After Effects", 
+          "DaVinci Resolve",
+          "Final Cut Pro",
+          "Motion Graphics",
+          "Color Grading"
+        ],
+        "achievements": [
+          "100M+ Total Views",
+          "YouTube Creator Award",
+          "Adobe Certified Expert",
+          "5+ Years Experience"
+        ]
+      }
+    },
+    "work": {
+      "id": "work",
+      "title": "Work",
+      "icon": "work",
+      "projects": [
+        {
+          "id": "project01",
+          "name": "TechVlogger Pro Series",
+          "type": "YouTube Channel",
+          "description": "Complete video editing for tech review channel with 1M+ subscribers",
+          "thumbnail": "https://via.placeholder.com/300x200/ef4444/ffffff?text=Tech+Reviews",
+          "link": "https://youtube.com/@techvloggerpro",
+          "tags": ["YouTube", "Tech Reviews", "Long-form"],
+          "stats": {
+            "views": "50M+",
+            "videos": "200+",
+            "duration": "2+ years"
+          }
+        },
+        {
+          "id": "project02", 
+          "name": "Creator Shorts Collection",
+          "type": "Short-form Content",
+          "description": "Viral YouTube Shorts series focusing on quick tech tips and reviews",
+          "thumbnail": "https://via.placeholder.com/300x200/10b981/ffffff?text=Shorts",
+          "link": "https://youtube.com/@techvloggerpro/shorts",
+          "tags": ["YouTube Shorts", "Viral Content", "Quick Tips"],
+          "stats": {
+            "views": "25M+",
+            "videos": "150+",
+            "avgViews": "500K+"
+          }
+        },
+        {
+          "id": "project03",
+          "name": "Documentary Series",
+          "type": "Long-form Documentary", 
+          "description": "Behind-the-scenes documentary about the creator economy",
+          "thumbnail": "https://via.placeholder.com/300x200/8b5cf6/ffffff?text=Documentary",
+          "link": "https://vimeo.com/alexthompson/documentary",
+          "tags": ["Documentary", "Storytelling", "Cinema"],
+          "stats": {
+            "views": "2M+",
+            "episodes": "6",
+            "awards": "2"
+          }
+        },
+        {
+          "id": "project04",
+          "name": "Brand Collaborations",
+          "type": "Commercial Work",
+          "description": "Video editing for major tech brands and startups",
+          "thumbnail": "https://via.placeholder.com/300x200/f59e0b/ffffff?text=Brand+Work",
+          "link": "https://alexthompson.dev/commercial",
+          "tags": ["Commercial", "Branding", "Corporate"],
+          "stats": {
+            "clients": "15+",
+            "campaigns": "30+",
+            "revenue": "$100K+"
+          }
+        }
+      ]
+    },
+    "resume": {
+      "id": "resume",
+      "title": "Resume",
+      "icon": "description",
+      "content": {
+        "downloadUrl": "/resume.pdf",
+        "experience": [
+          {
+            "title": "Lead Video Editor",
+            "company": "TechVlogger Pro",
+            "period": "2022 - Present",
+            "description": "Lead video editor for 1M+ subscriber YouTube channel"
+          },
+          {
+            "title": "Freelance Video Editor", 
+            "company": "Self-Employed",
+            "period": "2020 - 2022",
+            "description": "Freelance video editing for various content creators"
+          },
+          {
+            "title": "Junior Video Editor",
+            "company": "Creative Studios Inc",
+            "period": "2019 - 2020", 
+            "description": "Entry-level position learning professional video editing"
+          }
+        ],
+        "education": [
+          {
+            "degree": "Master's in Video Production",
+            "school": "UCLA",
+            "period": "2023 - Present"
+          },
+          {
+            "degree": "Bachelor's in Media Arts",
+            "school": "USC",
+            "period": "2015 - 2019"
+          }
+        ]
+      }
+    }
+  },
+  "todoList": [
+    "Land my dream UX job",
+    "Drink water",
+    "Move to the US", 
+    "Finish grad school without losing my mind",
+    "Build that banger spotify playlist",
+    "World domination",
+    "Get really good at making pasta",
+    "Travel somewhere new every year"
+  ],
+  "videos": {
+    "fullLength": [
+      {
+        "id": "video1",
+        "title": "Complete Tech Review Setup",
+        "embedId": "xJ3FMdLm42E",
+        "url": "https://www.youtube.com/embed/xJ3FMdLm42E?si=ygy-t89Q_PM8yDxJ",
+        "thumbnail": "https://img.youtube.com/vi/xJ3FMdLm42E/maxresdefault.jpg",
+        "description": "Full setup guide for tech reviewers"
+      }
+    ],
+    "shorts": [
+      {
+        "id": "short1",
+        "title": "Quick Tech Tip",
+        "embedId": "On-jr58h-u0",
+        "url": "https://youtube.com/shorts/On-jr58h-u0?si=T_KbjXhwSNeUkTVo",
+        "thumbnail": "https://img.youtube.com/vi/On-jr58h-u0/maxresdefault.jpg",
+        "description": "Quick tech tip for creators"
+      },
+      {
+        "id": "short2",
+        "title": "Editing Hack",
+        "embedId": "dQw4w9WgXcQ",
+        "url": "https://youtube.com/shorts/dQw4w9WgXcQ",
+        "thumbnail": "https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg",
+        "description": "Pro editing hack"
+      },
+      {
+        "id": "short3",
+        "title": "Color Grading Quick Tip",
+        "embedId": "L_jWHffIx5E",
+        "url": "https://youtube.com/shorts/L_jWHffIx5E",
+        "thumbnail": "https://img.youtube.com/vi/L_jWHffIx5E/maxresdefault.jpg",
+        "description": "Fast color grading technique"
+      },
+      {
+        "id": "short4",
+        "title": "Audio Sync Trick",
+        "embedId": "oHg5SJYRHA0",
+        "url": "https://youtube.com/shorts/oHg5SJYRHA0",
+        "thumbnail": "https://img.youtube.com/vi/oHg5SJYRHA0/maxresdefault.jpg",
+        "description": "Perfect audio sync every time"
+      }
+    ]
+  }
+}
