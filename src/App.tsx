@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-import { Box } from '@mui/material';
-import LeftSidebar from './components/LeftSidebar';
+import { Box, useMediaQuery } from '@mui/material';
 import RightSection from './components/RightSection';
+import MacOSMenuBar from './components/MacOSMenuBar';
+import MobileInterface from './components/MobileInterface';
 import portfolioData from './data/portfolioData.json';
 import './App.css';
 
@@ -32,6 +33,7 @@ export interface DetailData {
 function App() {
   const [selectedSection, setSelectedSection] = useState<string>('work');
   const [detailData, setDetailData] = useState<DetailData | null>(null);
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   const handleSectionClick = (sectionId: string) => {
     setSelectedSection(sectionId);
@@ -46,40 +48,32 @@ function App() {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Box sx={{ 
-        display: 'flex', 
         height: '100vh',
-        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
+        backgroundColor: isMobile 
+          ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+          : '#e5e5e5',
+        backgroundAttachment: 'fixed',
+        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+        overflow: 'hidden'
       }}>
-        {/* Left Sidebar */}
-        <Box sx={{ 
-          width: 280, 
-          backgroundColor: '#f8f8f8',
-          borderRight: '1px solid #e0e0e0',
-          display: 'flex',
-          flexDirection: 'column'
-        }}>
-          <LeftSidebar 
-            portfolioData={portfolioData}
-            selectedSection={selectedSection}
-            onSectionClick={handleSectionClick}
-            onInfoClick={handleInfoClick}
-          />
-        </Box>
-
-        {/* Right Section */}
-        <Box sx={{ 
-          flex: 1,
-          backgroundColor: '#ffffff',
-          overflow: 'hidden'
-        }}>
-          <RightSection 
-            selectedSection={selectedSection}
-            portfolioData={portfolioData}
-            onInfoClick={handleInfoClick}
-            detailData={detailData}
-            onSectionChange={handleSectionClick}
-          />
-        </Box>
+        {/* Mobile Interface */}
+        {isMobile ? (
+          <MobileInterface portfolioData={portfolioData} />
+        ) : (
+          <>
+            {/* macOS Menu Bar */}
+            <MacOSMenuBar />
+            
+            {/* Main Content Area with React Flow */}
+            <RightSection 
+              selectedSection={selectedSection}
+              portfolioData={portfolioData}
+              onInfoClick={handleInfoClick}
+              detailData={detailData}
+              onSectionChange={handleSectionClick}
+            />
+          </>
+        )}
       </Box>
     </ThemeProvider>
   );

@@ -1,6 +1,8 @@
-import React, { useCallback, useMemo, useState } from 'react';
-import { Box, Typography } from '@mui/material';
-import ReactFlow, {
+import React, { useState, useCallback, useMemo } from 'react';
+import { Box } from '@mui/material';
+import {
+  ReactFlow,
+  ReactFlowProvider,
   Node,
   Edge,
   addEdge,
@@ -11,12 +13,13 @@ import ReactFlow, {
   BackgroundVariant,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
-import FolderNode from './nodes/FolderNode';
 import InfoNode from './nodes/InfoNode';
-import ProjectNode from './nodes/ProjectNode';
-import VideoCarouselNode from './nodes/VideoCarouselNode';
 import ExpandedInfoNode from './nodes/ExpandedInfoNode';
 import AboutMeExpandedNode from './nodes/AboutMeExpandedNode';
+import MacOSFileExplorerNode from './nodes/MacOSFileExplorerNode';
+import MacOSNotesNode from './nodes/MacOSNotesNode';
+import DesktopFolderNode from './nodes/DesktopFolderNode';
+import MacOSDock from './MacOSDock';
 import { DetailData } from '../App';
 
 interface RightSectionProps {
@@ -28,12 +31,12 @@ interface RightSectionProps {
 }
 
 const nodeTypes = {
-  folder: FolderNode,
   info: InfoNode,
-  project: ProjectNode,
-  videoCarousel: VideoCarouselNode,
   expandedInfo: ExpandedInfoNode,
   aboutMeExpanded: AboutMeExpandedNode,
+  macOSFileExplorer: MacOSFileExplorerNode,
+  macOSNotes: MacOSNotesNode,
+  desktopFolder: DesktopFolderNode,
 };
 
 const RightSection: React.FC<RightSectionProps> = ({
@@ -43,291 +46,219 @@ const RightSection: React.FC<RightSectionProps> = ({
   detailData,
   onSectionChange
 }) => {
-  const [expandedNodes, setExpandedNodes] = useState<Set<string>>(new Set());
+  const [showFileExplorer, setShowFileExplorer] = useState(false);
+  const [showNotes, setShowNotes] = useState(false);
+  const [notesContent, setNotesContent] = useState<{
+    title: string;
+    content: string;
+    type: 'about' | 'project' | 'experience';
+  } | null>(null);
+  
+  // Handle dock item clicks
+  const handleDockItemClick = (itemId: string) => {
+    if (itemId === 'finder' || itemId === 'youtube-videos' || itemId === 'youtube-shorts') {
+      setShowFileExplorer(true);
+    } else if (itemId === 'about') {
+      // Show About Me in Notes app
+      setNotesContent({
+        title: 'About Me',
+        content: portfolioData.profile.detailedAbout,
+        type: 'about'
+      });
+      setShowNotes(true);
+    } else if (onSectionChange) {
+      onSectionChange(itemId);
+    }
+  };
+
   // Generate nodes based on selected section
   const generateNodes = useCallback(() => {
     const nodes: Node[] = [];
     
-    if (selectedSection === 'work') {
-      // Welcome message - centered at top
+    // Desktop folder nodes arranged - half left, half right
+    const projects = portfolioData.sections.work.projects;
+    
+    // Desktop icons positioned on both sides
+    const desktopIcons = [
+      // Left side icons
+      { 
+        id: 'resume-desktop', 
+        label: 'Resume', 
+        type: 'resume', 
+        position: { x: 50, y: 100 },
+        onClick: () => window.open('/resume.pdf', '_blank')
+      },
+      { 
+        id: 'notes-desktop', 
+        label: 'Notes', 
+        type: 'notes', 
+        position: { x: 50, y: 200 },
+        onClick: () => {
+          setNotesContent({
+            title: 'About Me',
+            content: `${portfolioData.profile.detailedAbout}\n\n🎬 Sample YouTube Video:\nhttps://youtube.com/watch?v=dQw4w9WgXcQ`,
+            type: 'about'
+          });
+          setShowNotes(true);
+        }
+      },
+      { 
+        id: 'youtube-videos-desktop', 
+        label: 'YouTube Videos', 
+        type: 'video', 
+        position: { x: 50, y: 300 },
+        onClick: () => {
+          setNotesContent({
+            title: 'YouTube Videos',
+            content: `📺 My YouTube Channel\n\nCheck out my latest videos:\n\n🎬 Tech Review:\nhttps://youtube.com/watch?v=dQw4w9WgXcQ\n\n🎬 Tutorial Series:\nhttps://youtube.com/watch?v=oHg5SJYRHA0`,
+            type: 'project'
+          });
+          setShowNotes(true);
+        }
+      },
+      // Right side icons
+      { 
+        id: 'youtube-shorts-desktop', 
+        label: 'YouTube Shorts', 
+        type: 'shorts', 
+        position: { x: window.innerWidth - 150, y: 100 },
+        onClick: () => {
+          setNotesContent({
+            title: 'YouTube Shorts',
+            content: `🩳 My YouTube Shorts\n\nQuick videos and tutorials:\n\n🎬 Quick Tip:\nhttps://youtube.com/watch?v=dQw4w9WgXcQ\n\n🎬 Behind the Scenes:\nhttps://youtube.com/watch?v=oHg5SJYRHA0`,
+            type: 'project'
+          });
+          setShowNotes(true);
+        }
+      },
+    ];
+
+    // Add project folders - half on left, half on right
+    projects.slice(0, 4).forEach((project: any, index: number) => {
+      const isLeftSide = index < 2;
+      const sideIndex = index % 2;
+      
+      desktopIcons.push({
+        id: `desktop-project-${project.id}`,
+        label: project.name,
+        type: 'folder',
+        position: { 
+          x: isLeftSide ? 50 : window.innerWidth - 150, 
+          y: 400 + (sideIndex * 100) 
+        },
+        onClick: () => {
+          setNotesContent({
+            title: project.name,
+            content: `📁 ${project.name}\n\n📋 Project Type: ${project.type}\n\n📝 Description:\n${project.description}\n\n🏷️ Tags:\n${project.tags?.join(', ') || 'N/A'}\n\n📊 Statistics:\n${Object.entries(project.stats || {}).map(([key, value]) => `• ${key}: ${value}`).join('\n')}\n\n🔗 Project Link: ${project.link}\n\n🎬 Demo Video:\nhttps://youtube.com/watch?v=dQw4w9WgXcQ`,
+            type: 'project'
+          });
+          setShowNotes(true);
+        }
+      });
+    });
+
+    // Add all desktop icons as nodes
+    desktopIcons.forEach((icon) => {
       nodes.push({
-        id: 'welcome',
-        type: 'info',
-        position: { x: 400, y: 100 },
+        id: icon.id,
+        type: 'desktopFolder',
+        position: icon.position,
         data: {
-          label: 'welcome to my',
-          subtitle: 'portfolio.',
-          type: 'welcome'
+          label: icon.label,
+          type: icon.type,
+          onClick: icon.onClick
         },
       });
+    });
 
-      // Videos folder - conditional rendering with proper spacing
-      if (expandedNodes.has('videos-folder')) {
-        nodes.push({
-          id: 'videos-expanded',
-          type: 'videoCarousel',
-          position: { x: 150, y: 300 },
-          data: {
-            videos: portfolioData.videos,
-            onClose: () => {
-              setExpandedNodes(prev => {
-                const newSet = new Set(prev);
-                newSet.delete('videos-folder');
-                return newSet;
-              });
-            }
+    // Show macOS File Explorer if toggled
+    if (showFileExplorer) {
+      const fileExplorerData = {
+        title: 'Portfolio Explorer',
+        folders: [
+          {
+            id: 'work',
+            name: 'Work Projects',
+            type: 'work',
+            items: portfolioData.sections.work.projects.map((project: any) => ({
+              id: project.id,
+              name: project.name,
+              type: 'project',
+              url: project.link,
+              notesContent: `📁 ${project.name}\n\n📋 Project Type: ${project.type}\n\n📝 Description:\n${project.description}\n\n🏷️ Tags:\n${project.tags?.join(', ') || 'N/A'}\n\n📊 Statistics:\n${Object.entries(project.stats || {}).map(([key, value]) => `• ${key}: ${value}`).join('\n')}\n\n🔗 Link: ${project.link}`
+            }))
           },
-        });
-      } else {
-        // Only show main navigation nodes if no expanded nodes
-        // About Me navigation
-        nodes.push({
-          id: 'about-nav',
-          type: 'info',
-          position: { x: 200, y: 300 },
-          data: {
-            label: 'About Me',
-            subtitle: 'Learn more about me',
-            type: 'about',
-            onClick: () => {
-              // Navigate to about section
-              if (onSectionChange) {
-                onSectionChange('about');
+          {
+            id: 'youtube-videos',
+            name: 'YouTube Videos',
+            type: 'youtube',
+            items: portfolioData.videos.fullLength.map((video: any) => ({
+              id: video.id,
+              name: video.title,
+              type: 'video',
+              url: video.url
+            }))
+          },
+          {
+            id: 'youtube-shorts',
+            name: 'YouTube Shorts',
+            type: 'shorts',
+            items: portfolioData.videos.shorts.map((video: any) => ({
+              id: video.id,
+              name: video.title,
+              type: 'video',
+              url: video.url
+            }))
+          },
+          {
+            id: 'resume',
+            name: 'Resume & Documents',
+            type: 'document',
+            items: [
+              {
+                id: 'resume-pdf',
+                name: 'Resume.pdf',
+                type: 'document',
+                url: '/resume.pdf'
               }
-            }
-          },
-        });
-
-        // YouTube Videos folder
-        nodes.push({
-          id: 'videos-folder',
-          type: 'folder',
-          position: { x: 450, y: 300 },
-          data: {
-            label: 'YouTube Videos',
-            onClick: () => {
-              setExpandedNodes(prev => new Set(prev).add('videos-folder'));
-            }
-          },
-        });
-
-        // Resume navigation with download
-        nodes.push({
-          id: 'resume-nav',
-          type: 'info',
-          position: { x: 700, y: 300 },
-          data: {
-            label: 'Resume.pdf',
-            subtitle: 'Download my resume',
-            type: 'resume',
-            onClick: () => {
-              // Create download link
-              const link = document.createElement('a');
-              link.href = '/resume.pdf'; // You'll need to add this file to public folder
-              link.download = 'Alex_Thompson_Resume.pdf';
-              document.body.appendChild(link);
-              link.click();
-              document.body.removeChild(link);
-            }
-          },
-        });
-      }
-
-    } else if (selectedSection === 'about') {
-      // About Me - conditional rendering
-      if (expandedNodes.has('about-main')) {
-        nodes.push({
-          id: 'about-expanded',
-          type: 'aboutMeExpanded',
-          position: { x: 100, y: 80 },
-          data: {
-            profile: portfolioData.profile,
-            content: portfolioData.sections.about.content,
-            onClose: () => {
-              setExpandedNodes(prev => {
-                const newSet = new Set(prev);
-                newSet.delete('about-main');
-                return newSet;
-              });
-            }
-          },
-        });
-      } else {
-        nodes.push({
-          id: 'about-main',
-          type: 'info',
-          position: { x: 350, y: 80 },
-          data: {
-            label: 'About Me',
-            subtitle: portfolioData.profile.bio.substring(0, 80) + '...',
-            type: 'about',
-            onClick: () => {
-              setExpandedNodes(prev => new Set(prev).add('about-main'));
-            }
-          },
-        });
-      }
-
-      // Only show Skills and Achievements folders if About Me is not expanded
-      if (!expandedNodes.has('about-main')) {
-        // Skills folder - conditional rendering
-        if (expandedNodes.has('skills-folder')) {
-          nodes.push({
-            id: 'skills-expanded',
-            type: 'expandedInfo',
-            position: { x: 100, y: 300 },
-            data: {
-              title: 'Skills & Expertise',
-              content: { skills: portfolioData.sections.about.content.skills },
-              type: 'skills',
-              onClose: () => {
-                setExpandedNodes(prev => {
-                  const newSet = new Set(prev);
-                  newSet.delete('skills-folder');
-                  return newSet;
-                });
-              }
-            },
-          });
-        } else {
-          nodes.push({
-            id: 'skills-folder',
-            type: 'folder',
-            position: { x: 200, y: 300 },
-            data: {
-              label: 'Skills',
-              onClick: () => {
-                setExpandedNodes(prev => new Set(prev).add('skills-folder'));
-              }
-            },
-          });
+            ]
+          }
+        ],
+        onClose: () => setShowFileExplorer(false),
+        onOpenNotes: (title: string, content: string, type: 'about' | 'project' | 'experience') => {
+          setNotesContent({ title, content, type });
+          setShowNotes(true);
         }
+      };
 
-        // Achievements folder - conditional rendering
-        if (expandedNodes.has('achievements-folder')) {
-          nodes.push({
-            id: 'achievements-expanded',
-            type: 'expandedInfo',
-            position: { x: 450, y: 300 },
-            data: {
-              title: 'Achievements',
-              content: { achievements: portfolioData.sections.about.content.achievements },
-              type: 'achievements',
-              onClose: () => {
-                setExpandedNodes(prev => {
-                  const newSet = new Set(prev);
-                  newSet.delete('achievements-folder');
-                  return newSet;
-                });
-              }
-            },
-          });
-        } else {
-          nodes.push({
-            id: 'achievements-folder',
-            type: 'folder',
-            position: { x: 600, y: 300 },
-            data: {
-              label: 'Achievements',
-              onClick: () => {
-                setExpandedNodes(prev => new Set(prev).add('achievements-folder'));
-              }
-            },
-          });
-        }
-      }
-
-    } else if (selectedSection === 'resume') {
-      // Resume section layout - centered and organized
       nodes.push({
-        id: 'resume-main',
-        type: 'info',
-        position: { x: 350, y: 100 },
+        id: 'file-explorer',
+        type: 'macOSFileExplorer',
+        position: { x: 340, y: 170 }, // Position like in screenshot
+        data: fileExplorerData,
+      });
+    }
+
+    // Show macOS Notes if toggled
+    if (showNotes && notesContent) {
+      nodes.push({
+        id: 'notes-app',
+        type: 'macOSNotes',
+        position: { x: 300, y: 100 },
+        draggable: false,
+        selectable: false,
         data: {
-          label: 'Resume.pdf',
-          subtitle: 'Download my complete resume',
-          type: 'resume',
-          onClick: () => onInfoClick({
-            title: 'Resume',
-            content: portfolioData.sections.resume.content,
-            type: 'resume'
-          })
+          ...notesContent,
+          onClose: () => setShowNotes(false)
         },
       });
-
-      // Experience folder - conditional rendering
-      if (expandedNodes.has('experience-folder')) {
-        nodes.push({
-          id: 'experience-expanded',
-          type: 'expandedInfo',
-          position: { x: 100, y: 280 },
-          data: {
-            title: 'Work Experience',
-            content: { experience: portfolioData.sections.resume.content.experience },
-            type: 'experience',
-            onClose: () => {
-              setExpandedNodes(prev => {
-                const newSet = new Set(prev);
-                newSet.delete('experience-folder');
-                return newSet;
-              });
-            }
-          },
-        });
-      } else {
-        nodes.push({
-          id: 'experience-folder',
-          type: 'folder',
-          position: { x: 250, y: 280 },
-          data: {
-            label: 'Experience',
-            onClick: () => {
-              setExpandedNodes(prev => new Set(prev).add('experience-folder'));
-            }
-          },
-        });
-      }
-
-      // Education folder - conditional rendering
-      if (expandedNodes.has('education-folder')) {
-        nodes.push({
-          id: 'education-expanded',
-          type: 'expandedInfo',
-          position: { x: 450, y: 280 },
-          data: {
-            title: 'Education',
-            content: { education: portfolioData.sections.resume.content.education },
-            type: 'education',
-            onClose: () => {
-              setExpandedNodes(prev => {
-                const newSet = new Set(prev);
-                newSet.delete('education-folder');
-                return newSet;
-              });
-            }
-          },
-        });
-      } else {
-        nodes.push({
-          id: 'education-folder',
-          type: 'folder',
-          position: { x: 550, y: 280 },
-          data: {
-            label: 'Education',
-            onClick: () => {
-              setExpandedNodes(prev => new Set(prev).add('education-folder'));
-            }
-          },
-        });
-      }
     }
 
     return nodes;
-  }, [selectedSection, portfolioData, onInfoClick, expandedNodes, onSectionChange]);
+  }, [portfolioData, showFileExplorer, showNotes, notesContent]);
 
   const generateEdges = useCallback(() => {
     const edges: Edge[] = [];
-    // Add connections between related nodes if needed
     return edges;
   }, []);
 
@@ -342,66 +273,162 @@ const RightSection: React.FC<RightSectionProps> = ({
     [setEdges]
   );
 
-  // Clear expanded nodes when section changes
-  React.useEffect(() => {
-    setExpandedNodes(new Set());
-  }, [selectedSection]);
-
-  // Update nodes when section or expanded nodes change
+  // Update nodes when file explorer state changes
   React.useEffect(() => {
     setNodes(generateNodes());
     setEdges(generateEdges());
-  }, [selectedSection, expandedNodes, generateNodes, generateEdges, setNodes, setEdges]);
+  }, [showFileExplorer, generateNodes, generateEdges, setNodes, setEdges]);
 
   return (
-    <Box sx={{ height: '100%', position: 'relative' }}>
-      {/* Header */}
-      <Box sx={{ 
-        p: 2, 
-        borderBottom: '1px solid #e0e0e0',
-        backgroundColor: '#fafafa'
-      }}>
-        <Typography variant="h6" fontWeight="bold">
-          {selectedSection === 'work' && 'Work Portfolio'}
-          {selectedSection === 'about' && 'About Me'}
-          {selectedSection === 'resume' && 'Resume & Experience'}
-        </Typography>
-        <Typography variant="body2" color="text.secondary">
-          {selectedSection === 'work' && 'Visual Design & UI'}
-          {selectedSection === 'about' && 'Personal Information & Skills'}
-          {selectedSection === 'resume' && 'Professional Background'}
-        </Typography>
-      </Box>
-
-      {/* React Flow Canvas */}
-      <Box sx={{ 
-        height: 'calc(100% - 80px)',
-        width: '100%',
-        position: 'relative'
-      }}>
-        <ReactFlow
-          nodes={nodes}
-          edges={edges}
-          onNodesChange={onNodesChange}
-          onEdgesChange={onEdgesChange}
-          onConnect={onConnect}
-          nodeTypes={nodeTypes}
-          connectionLineType={ConnectionLineType.SmoothStep}
-          fitView
-          fitViewOptions={{ padding: 0.1 }}
-          minZoom={0.8}
-          maxZoom={1.5}
-          defaultViewport={{ x: 0, y: 0, zoom: 1 }}
+    <ReactFlowProvider>
+      <Box sx={{ height: '100%', position: 'relative', pt: '24px' }}>
+        {/* Background Text */}
+        <Box
+          sx={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            textAlign: 'center',
+            zIndex: 0,
+            pointerEvents: 'none',
+            userSelect: 'none',
+          }}
         >
-          <Background 
-            color="#999999" 
-            gap={20} 
-            variant={BackgroundVariant.Dots}
-            style={{ backgroundColor: '#f5f5f5' }}
-          />
-        </ReactFlow>
+          <Box sx={{ mb: 2 }}>
+            <Box
+              sx={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 1,
+                color: '#34C759',
+                fontSize: '14px',
+                fontWeight: 500,
+                mb: 3,
+              }}
+            >
+              <Box
+                sx={{
+                  width: 8,
+                  height: 8,
+                  borderRadius: '50%',
+                  backgroundColor: '#34C759',
+                }}
+              />
+              ACTIVELY LOOKING FOR OPPORTUNITIES
+            </Box>
+          </Box>
+          
+          <Box sx={{ mb: 1 }}>
+            <span style={{ 
+              color: '#6366f1', 
+              fontSize: '48px', 
+              fontWeight: 400,
+              fontFamily: 'cursive'
+            }}>
+              Hey there. I am
+            </span>
+          </Box>
+          
+          <Box sx={{ mb: 2 }}>
+            <span style={{ 
+              color: '#1f2937', 
+              fontSize: '72px', 
+              fontWeight: 700,
+              fontFamily: 'serif',
+              lineHeight: 0.9
+            }}>
+              Anany<br />Deep
+            </span>
+          </Box>
+          
+          <Box sx={{ mb: 4 }}>
+            <Box
+              sx={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 1,
+                color: '#6b7280',
+                fontSize: '18px',
+                fontWeight: 500,
+              }}
+            >
+              <Box
+                sx={{
+                  width: 60,
+                  height: 1,
+                  backgroundColor: '#6b7280',
+                }}
+              />
+              VIDEO EDITOR
+              <Box
+                sx={{
+                  width: 8,
+                  height: 8,
+                  borderRadius: '50%',
+                  backgroundColor: '#6366f1',
+                }}
+              />
+            </Box>
+          </Box>
+          
+          <Box
+            sx={{
+              display: 'inline-block',
+              backgroundColor: '#6366f1',
+              color: 'white',
+              px: 4,
+              py: 2,
+              borderRadius: '25px',
+              fontSize: '16px',
+              fontWeight: 600,
+              cursor: 'pointer',
+              transition: 'all 0.3s ease',
+              pointerEvents: 'auto',
+              '&:hover': {
+                backgroundColor: '#4f46e5',
+                transform: 'translateY(-2px)',
+                boxShadow: '0 10px 25px rgba(99, 102, 241, 0.3)',
+                fontWeight: 700,
+              }
+            }}
+            onClick={() => {
+              // Add contact functionality here
+              console.log('Get in Touch clicked');
+            }}
+          >
+            Get in Touch
+          </Box>
+        </Box>
+
+        {/* React Flow Canvas */}
+        <Box sx={{ height: 'calc(100% - 24px)' }}>
+          <ReactFlow
+            nodes={nodes}
+            edges={edges}
+            onNodesChange={onNodesChange}
+            onEdgesChange={onEdgesChange}
+            onConnect={onConnect}
+            nodeTypes={nodeTypes}
+            connectionLineType={ConnectionLineType.SmoothStep}
+            defaultViewport={{ x: 0, y: 0, zoom: 1 }}
+            minZoom={0.5}
+            maxZoom={2}
+            fitView={false}
+          >
+            <Background 
+              variant={BackgroundVariant.Lines} 
+              gap={20} 
+              size={1}
+              color="rgba(0,0,0,0.05)"
+            />
+          </ReactFlow>
+        </Box>
+
+        {/* macOS Dock */}
+        <MacOSDock onItemClick={handleDockItemClick} />
       </Box>
-    </Box>
+    </ReactFlowProvider>
   );
 };
 

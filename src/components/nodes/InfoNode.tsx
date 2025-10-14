@@ -1,11 +1,7 @@
 import React from 'react';
 import { Handle, Position } from 'reactflow';
 import { Box, Typography } from '@mui/material';
-import { 
-  Info as InfoIcon, 
-  Description as ResumeIcon,
-  Person as PersonIcon 
-} from '@mui/icons-material';
+import MacOSIcon from '../MacOSIcon';
 
 interface InfoNodeProps {
   data: {
@@ -20,13 +16,13 @@ const InfoNode: React.FC<InfoNodeProps> = ({ data }) => {
   const getIcon = () => {
     switch (data.type) {
       case 'resume':
-        return <ResumeIcon sx={{ fontSize: 24, color: '#FF6B6B' }} />;
+        return <MacOSIcon name="resume" size={24} />;
       case 'about':
-        return <PersonIcon sx={{ fontSize: 24, color: '#4ECDC4' }} />;
+        return <MacOSIcon name="about" size={24} />;
       case 'welcome':
         return null;
       default:
-        return <InfoIcon sx={{ fontSize: 24, color: '#007AFF' }} />;
+        return <MacOSIcon name="info" size={24} />;
     }
   };
 
