@@ -8,9 +8,11 @@ import {
   addEdge,
   useNodesState,
   useEdgesState,
-  Background,
+  Connection,
   ConnectionLineType,
+  Background,
   BackgroundVariant,
+  PanOnScrollMode,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 import InfoNode from './nodes/InfoNode';
@@ -20,6 +22,7 @@ import MacOSFileExplorerNode from './nodes/MacOSFileExplorerNode';
 import MacOSNotesNode from './nodes/MacOSNotesNode';
 import DesktopFolderNode from './nodes/DesktopFolderNode';
 import MacOSDock from './MacOSDock';
+import MacOSMenuBar from './MacOSMenuBar';
 import { DetailData } from '../App';
 
 interface RightSectionProps {
@@ -53,6 +56,15 @@ const RightSection: React.FC<RightSectionProps> = ({
     content: string;
     type: 'about' | 'project' | 'experience';
   } | null>(null);
+  const [resetTrigger, setResetTrigger] = useState(0);
+  
+  // Reset all positions to default
+  const handleResetPositions = () => {
+    setShowFileExplorer(false);
+    setShowNotes(false);
+    setNotesContent(null);
+    setResetTrigger(prev => prev + 1);
+  };
   
   // Handle dock item clicks
   const handleDockItemClick = (itemId: string) => {
@@ -255,7 +267,7 @@ const RightSection: React.FC<RightSectionProps> = ({
     }
 
     return nodes;
-  }, [portfolioData, showFileExplorer, showNotes, notesContent]);
+  }, [portfolioData, showFileExplorer, showNotes, notesContent, resetTrigger]);
 
   const generateEdges = useCallback(() => {
     const edges: Edge[] = [];
@@ -281,6 +293,7 @@ const RightSection: React.FC<RightSectionProps> = ({
 
   return (
     <ReactFlowProvider>
+      <MacOSMenuBar onResetPositions={handleResetPositions} />
       <Box sx={{ height: '100%', position: 'relative', pt: '24px' }}>
         {/* Background Text */}
         <Box
@@ -313,6 +326,32 @@ const RightSection: React.FC<RightSectionProps> = ({
                   height: 8,
                   borderRadius: '50%',
                   backgroundColor: '#34C759',
+                  position: 'relative',
+                  '&::before': {
+                    content: '""',
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
+                    borderRadius: '50%',
+                    backgroundColor: '#34C759',
+                    animation: 'pulse 2s infinite',
+                  },
+                  '@keyframes pulse': {
+                    '0%': {
+                      transform: 'scale(1)',
+                      opacity: 1,
+                    },
+                    '50%': {
+                      transform: 'scale(1.5)',
+                      opacity: 0.7,
+                    },
+                    '100%': {
+                      transform: 'scale(2)',
+                      opacity: 0,
+                    },
+                  },
                 }}
               />
               ACTIVELY LOOKING FOR OPPORTUNITIES
@@ -415,6 +454,13 @@ const RightSection: React.FC<RightSectionProps> = ({
             minZoom={0.5}
             maxZoom={2}
             fitView={false}
+            panOnScroll={false}
+            panOnScrollMode={PanOnScrollMode.Free}
+            panOnDrag={true}
+            zoomOnScroll={false}
+            zoomOnPinch={false}
+            zoomOnDoubleClick={false}
+            preventScrolling={true}
           >
             <Background 
               variant={BackgroundVariant.Lines} 

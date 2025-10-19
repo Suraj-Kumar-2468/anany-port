@@ -9,6 +9,8 @@ interface DockItem {
   icon: React.ReactNode;
   onClick: () => void;
   color?: string;
+  isRunning?: boolean;
+  ctaText?: string;
 }
 
 interface MacOSDockProps {
@@ -23,13 +25,58 @@ const MacOSDock: React.FC<MacOSDockProps> = ({ onItemClick }) => {
       id: 'finder',
       name: 'Finder',
       icon: <MacOSIcon name="finder" size={50} />,
-      onClick: () => onItemClick('finder')
+      onClick: () => onItemClick('finder'),
+      isRunning: true,
+      ctaText: 'Browse my portfolio files and projects'
     },
     {
       id: 'work',
       name: 'Work Projects',
       icon: <MacOSIcon name="work" size={50} />,
-      onClick: () => onItemClick('work')
+      onClick: () => onItemClick('work'),
+      isRunning: false,
+      ctaText: 'View my professional work and case studies'
+    },
+    {
+      id: 'facetime',
+      name: 'Phone',
+      icon: <MacOSIcon name="facetime" size={50} />,
+      onClick: () => {
+        const phoneNumber = '+91-9876543210';
+        navigator.clipboard.writeText(phoneNumber);
+        alert(`📞 Phone number copied: ${phoneNumber}\n\nFeel free to call me for any opportunities!`);
+      },
+      isRunning: false,
+      ctaText: '+91-9876543210 - Click to copy my phone number'
+    },
+    {
+      id: 'mail',
+      name: 'Mail',
+      icon: <MacOSIcon name="mail" size={50} />,
+      onClick: () => {
+        const email = 'ananydeep@example.com';
+        const subject = 'Portfolio Inquiry';
+        const body = 'Hi Anany, I found your portfolio and would like to discuss opportunities!';
+        window.open(`mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`);
+      },
+      isRunning: false,
+      ctaText: 'ananydeep@example.com - Send me an email'
+    },
+    {
+      id: 'youtube-videos',
+      name: 'YouTube Videos',
+      icon: <MacOSIcon name="youtube" size={50} />,
+      onClick: () => onItemClick('youtube-videos'),
+      isRunning: false,
+      ctaText: 'Watch my video editing work and tutorials'
+    },
+    {
+      id: 'youtube-shorts',
+      name: 'YouTube Shorts',
+      icon: <MacOSIcon name="shorts" size={50} />,
+      onClick: () => onItemClick('youtube-shorts'),
+      isRunning: false,
+      ctaText: 'Quick video edits and creative content'
     },
     {
       id: 'resume',
@@ -37,67 +84,40 @@ const MacOSDock: React.FC<MacOSDockProps> = ({ onItemClick }) => {
       icon: <MacOSIcon name="resume" size={50} />,
       onClick: () => {
         window.open('/resume.pdf', '_blank');
-      }
+      },
+      isRunning: false,
+      ctaText: 'Download my complete resume PDF'
     },
     {
-      id: 'youtube-videos',
-      name: 'YouTube Videos',
-      icon: <MacOSIcon name="youtube" size={50} />,
-      onClick: () => onItemClick('youtube-videos')
-    },
-    {
-      id: 'youtube-shorts',
-      name: 'YouTube Shorts',
-      icon: <MacOSIcon name="shorts" size={50} />,
-      onClick: () => onItemClick('youtube-shorts')
-    },
-    {
-      id: 'about',
-      name: 'About Me',
-      icon: <MacOSIcon name="about" size={50} />,
-      onClick: () => onItemClick('about')
-    },
-    {
-      id: 'launchpad',
-      name: 'Launchpad',
-      icon: <MacOSIcon name="launchpad" size={50} />,
-      onClick: () => onItemClick('launchpad')
-    },
-    {
-      id: 'mail',
-      name: 'Mail',
-      icon: <MacOSIcon name="mail" size={50} />,
-      onClick: () => onItemClick('mail')
+      id: 'messages',
+      name: 'WhatsApp',
+      icon: <MacOSIcon name="messages" size={50} />,
+      onClick: () => {
+        const phoneNumber = '+919876543210';
+        const message = 'Hi Anany! I found your portfolio and would like to connect.';
+        window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`);
+      },
+      isRunning: false,
+      ctaText: 'Message me on WhatsApp for quick chat'
     },
     {
       id: 'calendar',
-      name: 'Calendar',
+      name: 'Schedule Meeting',
       icon: <MacOSIcon name="calendar" size={50} />,
-      onClick: () => onItemClick('calendar')
-    },
-    {
-      id: 'photos',
-      name: 'Photos',
-      icon: <MacOSIcon name="photos" size={50} />,
-      onClick: () => onItemClick('photos')
-    },
-    {
-      id: 'music',
-      name: 'Music',
-      icon: <MacOSIcon name="music" size={50} />,
-      onClick: () => onItemClick('music')
-    },
-    {
-      id: 'settings',
-      name: 'System Preferences',
-      icon: <MacOSIcon name="settings" size={50} />,
-      onClick: () => onItemClick('settings')
+      onClick: () => {
+        // Open calendar scheduling link
+        window.open('https://calendly.com/ananydeep', '_blank');
+      },
+      isRunning: false,
+      ctaText: 'Schedule a meeting to discuss projects'
     },
     {
       id: 'trash',
       name: 'Trash',
       icon: <MacOSIcon name="trash-empty" size={50} />,
-      onClick: () => onItemClick('trash')
+      onClick: () => onItemClick('trash'),
+      isRunning: false,
+      ctaText: 'Clean workspace - drag files here'
     }
   ];
 
@@ -162,12 +182,30 @@ const MacOSDock: React.FC<MacOSDockProps> = ({ onItemClick }) => {
               justifyContent: 'center',
               cursor: 'pointer',
               transition: 'all 0.2s ease',
+              position: 'relative',
             }}
           >
             {item.icon}
+            
+            {/* Running indicator dot */}
+            {item.isRunning && (
+              <Box
+                sx={{
+                  position: 'absolute',
+                  bottom: -8,
+                  left: '50%',
+                  transform: 'translateX(-50%)',
+                  width: 4,
+                  height: 4,
+                  borderRadius: '50%',
+                  backgroundColor: '#007AFF',
+                  boxShadow: '0 0 4px rgba(0, 122, 255, 0.5)',
+                }}
+              />
+            )}
           </Box>
           
-          {/* Tooltip */}
+          {/* Enhanced Tooltip with CTA */}
           {hoveredItem === item.id && (
             <motion.div
               initial={{ opacity: 0, y: 10 }}
@@ -178,18 +216,31 @@ const MacOSDock: React.FC<MacOSDockProps> = ({ onItemClick }) => {
                 bottom: '100%',
                 left: '50%',
                 transform: 'translateX(-50%)',
-                marginBottom: '8px',
-                padding: '4px 8px',
-                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                marginBottom: '12px',
+                padding: '8px 12px',
+                backgroundColor: 'rgba(0, 0, 0, 0.9)',
                 color: 'white',
-                borderRadius: '4px',
-                fontSize: '12px',
+                borderRadius: '8px',
+                fontSize: '11px',
                 fontWeight: 500,
                 whiteSpace: 'nowrap',
                 pointerEvents: 'none',
+                maxWidth: '200px',
+                textAlign: 'center',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)',
               }}
             >
-              {item.name}
+              <div style={{ fontWeight: 600, marginBottom: '2px' }}>
+                {item.name}
+              </div>
+              <div style={{ 
+                fontSize: '10px', 
+                opacity: 0.8,
+                fontStyle: 'italic'
+              }}>
+                {item.ctaText}
+              </div>
             </motion.div>
           )}
         </motion.div>

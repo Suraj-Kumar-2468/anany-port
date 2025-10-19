@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Typography } from '@mui/material';
 
-const MacOSMenuBar: React.FC = () => {
+interface MacOSMenuBarProps {
+  onResetPositions?: () => void;
+}
+
+const MacOSMenuBar: React.FC<MacOSMenuBarProps> = ({ onResetPositions }) => {
   const [currentTime, setCurrentTime] = useState(new Date());
 
   useEffect(() => {
@@ -42,14 +46,51 @@ const MacOSMenuBar: React.FC = () => {
         fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
       }}
     >
-      {/* Left side - App menu */}
+      {/* Left side - Apple logo and menu */}
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+        {/* Apple Logo */}
+        <Box
+          sx={{
+            cursor: 'pointer',
+            padding: '2px 6px',
+            borderRadius: '4px',
+            '&:hover': {
+              backgroundColor: 'rgba(0, 0, 0, 0.1)',
+            }
+          }}
+          onClick={onResetPositions}
+        >
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <path
+              d="M11.182 2.982c-.61.61-1.6.61-2.21 0-.61-.61-.61-1.6 0-2.21.61-.61 1.6-.61 2.21 0 .61.61.61 1.6 0 2.21zm-1.105 8.036c-.61.61-1.6.61-2.21 0-.61-.61-.61-1.6 0-2.21.61-.61 1.6-.61 2.21 0 .61.61.61 1.6 0 2.21zm-8.036-1.105c-.61.61-1.6.61-2.21 0-.61-.61-.61-1.6 0-2.21.61-.61 1.6-.61 2.21 0 .61.61.61 1.6 0 2.21z"
+              fill="#000"
+            />
+            <path
+              d="M9.5 7c0 1.38-1.12 2.5-2.5 2.5S4.5 8.38 4.5 7 5.62 4.5 7 4.5 9.5 5.62 9.5 7z"
+              fill="#000"
+            />
+          </svg>
+        </Box>
+
         <Typography
           variant="body2"
           sx={{
             fontSize: '13px',
             fontWeight: 600,
             color: '#000',
+            cursor: 'pointer',
+            padding: '2px 6px',
+            borderRadius: '4px',
+            '&:hover': {
+              backgroundColor: 'rgba(0, 0, 0, 0.1)',
+            }
+          }}
+          onClick={() => {
+            // Open contact modal or navigate to contact
+            const email = 'ananydeep@example.com';
+            const subject = 'Portfolio Contact';
+            const body = 'Hi Anany, I found your portfolio and would like to get in touch!';
+            window.open(`mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`);
           }}
         >
           Contact
@@ -59,6 +100,15 @@ const MacOSMenuBar: React.FC = () => {
           sx={{
             fontSize: '13px',
             color: '#000',
+            cursor: 'pointer',
+            padding: '2px 6px',
+            borderRadius: '4px',
+            '&:hover': {
+              backgroundColor: 'rgba(0, 0, 0, 0.1)',
+            }
+          }}
+          onClick={() => {
+            window.open('/resume.pdf', '_blank');
           }}
         >
           Resume
